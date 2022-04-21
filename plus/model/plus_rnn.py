@@ -46,7 +46,7 @@ class PLUS_RNN(nn.Module):
         self.rnn.flatten_parameters()
         total_length = x.shape[1]
         h = self.embed(x)
-        h = pack_padded_sequence(h, lengths, batch_first=True)
+        h = pack_padded_sequence(h, lengths.to("cpu"), batch_first=True)
         h, _ = self.rnn(h)
         h = pad_packed_sequence(h, batch_first=True, total_length=total_length)[0][:, 1:-1][order_rev]
 
