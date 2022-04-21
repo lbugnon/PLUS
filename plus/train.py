@@ -138,13 +138,23 @@ class Trainer():
             if args["data_parallel"]: model.module.load_weights(save_prefix + idx + 'best.pt')
             else: model.load_weights(save_prefix + idx + 'best.pt')
 
-    def save_embeddings(self, save_prefix, args={}):
+    def save_embeddings(self, save_prefix, output_mode="all", args={}):
         # save embeddings
         if save_prefix is None: return
         else:
             embeddings = self.tasks_dict["results_eval"][0]["embeddings"]
-            for i in range(len(embeddings[0])): np.save(save_prefix + "z%d.npy" % i, embeddings[0][i].numpy())
-            for i in range(len(embeddings[1])): np.save(save_prefix + "h%d.npy" % i, embeddings[1][i].numpy())
+            if output_mode == "all":
+                for i in range(len(embeddings[0])): np.save(save_prefix + "z%d.npy" % i, embeddings[0][i].numpy())
+                for i in range(len(embeddings[1])): np.save(save_prefix + "h%d.npy" % i, embeddings[1][i].numpy())
+            if output_mode == "sum":
+                # save only h sum per sequence
+                nseq = len(embeddings[1])
+                emb_size = embeddings[1][0].shape[1]
+                emb_sum = np.zeros((nseq, emb_size))
+                for n in range(nseq):
+                    emb_sum[n, :] = embeddings[1][n].sum(dim=0).numpy()
+
+                np.save(save_prefix + "emb_sum.npy", emb_sum)
 
     def init_flag_result(self, t):
         # initialize training/development dictionaries and flags of a task [t]

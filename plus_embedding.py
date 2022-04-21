@@ -28,6 +28,7 @@ parser.add_argument('--pretrained-lm-model', help='path for pretrained lm-model 
 parser.add_argument('--device', help='device to use; multi-GPU if given multiple GPUs sperated by comma (default: cpu)')
 parser.add_argument('--output-path', help='path for outputs (default: stdout and without saving)')
 parser.add_argument('--output-index', help='index for outputs')
+parser.add_argument('--output-mode', help='Specify which output files are saved: {"sum", "all"}. "all" is the original implementation, "sum" only saves the embedding sum per sequence')
 parser.add_argument('--sanity-check', default=False, action='store_true', help='sanity check flag')
 
 
@@ -99,7 +100,7 @@ def main():
             b / len(iterator_test), trainer.loss_eval), end='\r', file=sys.stderr)
     print(' ' * 150, end='\r', file=sys.stderr)
 
-    trainer.save_embeddings(save_prefix)
+    trainer.save_embeddings(save_prefix, args["output_mode"])
     trainer.reset()
 
     end = Print('end embedding protein sequences', output)
