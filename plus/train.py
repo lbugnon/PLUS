@@ -149,12 +149,16 @@ class Trainer():
             if output_mode == "sum":
                 # save only h sum per sequence
                 nseq = len(embeddings[1])
-                emb_size = embeddings[1][0].shape[1]
-                emb_sum = np.zeros((nseq, emb_size))
+                z_size = embeddings[0][0].shape[1]
+                h_size = embeddings[1][0].shape[1]
+                z_sum = np.zeros((nseq, z_size))
+                h_sum = np.zeros((nseq, h_size))
                 for n in range(nseq):
-                    emb_sum[n, :] = embeddings[1][n].sum(dim=0).numpy()
+                    z_sum[n, :] = embeddings[0][n].sum(dim=0).numpy()
+                    h_sum[n, :] = embeddings[1][n].sum(dim=0).numpy()
 
-                np.save(save_prefix + "emb_sum.npy", emb_sum)
+                np.save(save_prefix + "h_sum.npy", h_sum)
+                np.save(save_prefix + "z_sum.npy", z_sum)
 
     def init_flag_result(self, t):
         # initialize training/development dictionaries and flags of a task [t]
